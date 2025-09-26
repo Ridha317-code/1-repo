@@ -1,39 +1,49 @@
-document.getElementById("addTaskBtn").addEventListener("click", addTask);
-document.getElementById("taskInput").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        addTask();
-    }
+const taskInput = document.getElementById("taskInput");
+const addTaskBtn = document.getElementById("addTaskBtn");
+const taskList = document.getElementById("taskList");
+
+// Load saved tasks when page opens
+window.onload = loadTasks;
+
+// Add task
+addTaskBtn.addEventListener("click", () => {
+  const taskText = taskInput.value.trim();
+  if (taskText !== "") {
+    addTask(taskText);
+    saveTasks();
+    taskInput.value = "";
+  }
 });
 
-function addTask() {
-    const taskInput = document.getElementById("taskInput");
-    const taskText = taskInput.value.trim();
+// Add task function
+function addTask(taskText) {
+  const li = document.createElement("li");
+  li.textContent = taskText;
 
-    // Only add the task if there's something typed
-    if (taskText !== "") {
-        // Create new list item
-        const li = document.createElement("li");
+  // Delete button
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.classList.add("delete-btn");
+  deleteBtn.onclick = () => {
+    li.remove();
+    saveTasks();
+  };
 
-        // Create text node for task
-        const taskTextNode = document.createTextNode(taskText);
-        li.appendChild(taskTextNode);
+  li.appendChild(deleteBtn);
+  taskList.appendChild(li);
+}
 
-        // Create delete button
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.classList.add("deleteBtn");
+// Save tasks to localStorage
+function saveTasks() {
+  const tasks = [];
+  document.querySelectorAll("#taskList li").forEach(li => {
+    tasks.push(li.firstChild.textContent);
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-        // When the delete button is clicked, remove the task
-        deleteBtn.addEventListener("click", function() {
-            li.remove();
-        });
-
-        li.appendChild(deleteBtn);
-
-        // Add the new task to the task list
-        document.getElementById("TaskList").appendChild(li);
-
-        // Clear input field
-        taskInput.value = "";
-    }
+// Load tasks from localStorage
+function loadTasks() {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.forEach(task => addTask(task));
 }
