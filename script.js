@@ -31,7 +31,7 @@ function addTask() {
         li.appendChild(deleteBtn);
 
         // Add the new task to the task list
-        document.getElementById("taskList").appendChild(li);
+        document.getElementById("TaskList").appendChild(li);
 
         // Clear input field
         taskInput.value = "";
